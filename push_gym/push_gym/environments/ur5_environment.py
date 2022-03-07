@@ -31,8 +31,8 @@ class ArmSim(BasePybulletEnv):
 
         #load table
         self._p.loadURDF(os.path.join(os.path.dirname(__file__), PLANE_URDF_PATH),[0, 0, -0.001])
-        self.table = self._p.loadURDF(os.path.join(os.path.dirname(__file__), UR5_WORKSPACE_URDF_PATH),[0.5, 0, 0])
-
+        self.table = self._p.loadURDF(os.path.join(os.path.dirname(__file__), UR5_WORKSPACE_URDF_PATH),[0, 0, 0])
+        self._p.changeVisualShape(self.table, -1, rgbaColor=[1, 1, 1, 1], physicsClientId=self.client_id)
         #load arm with griper
         #self._load_robot_with_gripper()
         # load arm with rod
@@ -187,13 +187,13 @@ class ArmSim(BasePybulletEnv):
     def _move_to_position(self, action):
         action_lim = 3 if len(action) > 3 else 2
         state = self._get_link_world_pose(self.robot_arm_id, self._robot_tool_center)
-
+        self.last_gripper_image_points = self.utils.get_pos_in_image(state[0])
         pos_action = np.multiply(action[0:action_lim], self.arm_normalization_value)
         yaw_action = np.multiply(action[action_lim], self.yaw_normalization_value)
 
         goalEndEffectorPos = np.asarray(state[0]) + [pos_action[0], pos_action[1], 0]
         goalEndEffectorPos[2] = self.initial_tool_z
-
+        self.current_gripper_image_points = self.utils.get_pos_in_image(goalEndEffectorPos)
         goalEndEffectorOri = np.array(euler_from_quat(state[1])) + np.array([0, 0, yaw_action])
 
         target_joint_states = np.array(self.get_ik_joints(goalEndEffectorPos,
@@ -212,10 +212,10 @@ class ArmSim(BasePybulletEnv):
         self._p.setJointMotorControlArray(
             self.robot_arm_id, self._robot_joint_indices,
             self._p.POSITION_CONTROL, target_joint_states,
-            positionGains=speed * np.ones(len(self._robot_joint_indices)),
-            forces=[100, 100, 100, 100, 100, 100],
-            targetVelocities=np.zeros(len(self._robot_joint_indices)),
-            velocityGains=np.ones(len(self._robot_joint_indices))
+            positionGains= speed * np.ones(len(self._robot_joint_indices)),
+            #forces=[100, 100, 100, 100, 100, 100],
+            #targetVelocities=np.zeros(len(self._robot_joint_indices)),
+            #velocityGains=np.ones(len(self._robot_joint_indices))
         )
 
         if till_timeout:

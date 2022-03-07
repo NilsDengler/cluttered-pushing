@@ -51,7 +51,7 @@ class Pushing(ArmSim):
         self.last_obj_conf = self.current_obj_conf
         #Generate first random goal
         self.goal_obj_conf = self.utils.generate_goal(self.pushing_object_id)
-        self.utils.debug_gui_target(np.asarray(self.goal_obj_conf[0]), np.asarray(euler_from_quat(self.goal_obj_conf[1])))
+        self.utils.debug_gui_target(np.asarray(self.goal_obj_conf[0]))
         #self.get_relative_coodinates_in_obj_frame()
         self.step_simulation(self.per_step_iterations)
         #save initial world state
@@ -84,9 +84,9 @@ class Pushing(ArmSim):
         self.current_run = 0
         self.current_steps = 0
         self.global_counter = 0
-        self.target_reached_thres = 0.01
+        self.target_reached_thres = 0.05
         self.target_max_dist = 2
-        self._max_episode_steps = 150
+        self._max_episode_steps = 200
         #Debug Variables
         self.Debug = False
         self.single_step_training_debug = False
@@ -227,7 +227,7 @@ class Pushing(ArmSim):
                 #self.goal_obj_conf = self.utils.generate_goal(self.pushing_object_id) # random
                 # self.goal_obj_conf = self.utils.generate_random_goal(self.pushing_object_id, 1, 0.4) # max
                 self.goal_obj_conf = self.utils.generate_random_goal(self.pushing_object_id, 2, max_distance=0.6, min_distance=0.3) #minmax
-
+            self.utils.debug_gui_target(np.asarray(self.goal_obj_conf[0]))
 
             # get first image of scene
             _, self.current_depth_img, self.current_true_depth = self.utils.get_image()
@@ -286,7 +286,7 @@ class Pushing(ArmSim):
         """
         observation = []
         # Latent space
-        self.local_window, _ = self.utils.get_local_window(self.current_depth_img.copy(), self.current_obj_conf, self.local_window_size)
+        self.local_window, self.corners = self.utils.get_local_window(self.current_depth_img.copy(), self.current_obj_conf, self.local_window_size)
         latent_space = self.encoder_model.encoder( tf.convert_to_tensor(self.utils.process_images(self.local_window)[None, :], dtype=tf.float32))
         self.reconstruction = self.encoder_model.decoder(latent_space).numpy().reshape(self.reconstruction_size,
                                                                                        self.reconstruction_size)
@@ -479,13 +479,8 @@ class Pushing(ArmSim):
 
     def init_debug_plt(self, current_reward):
         # point local window
-        pixel_points = self.cam.get_pos_in_image(self.current_obj_conf[0])
-        x1, x2 = self.set_point_to_bound(pixel_points[0] - 32), self.set_point_to_bound(pixel_points[0] + 32)
-        y1, y2 = self.set_point_to_bound(pixel_points[1] - 32), self.set_point_to_bound(pixel_points[1] + 32)
-
-        sub1_center = self.cam.get_pos_in_image(self.sub_goal_queue[1][0])
-        sub5_center = self.cam.get_pos_in_image(self.sub_goal_queue[5][0])
-        # orig_image = cv2.rectangle(self.current_depth_img.copy(), (x1, y1), (x2, y2), 222, 3)
+        sub1_center = self.utils.get_pos_in_image(self.sub_goal_queue[1][0])
+        sub5_center = self.utils.get_pos_in_image(self.sub_goal_queue[5][0])
         orig_image = cv2.line(self.current_depth_img.copy(), (self.corners[0][0], self.corners[0][1]),
                               (self.corners[1][0], self.corners[1][1]), 222, 5)
         orig_image = cv2.line(orig_image, (self.corners[1][0], self.corners[1][1]),
@@ -497,22 +492,17 @@ class Pushing(ArmSim):
         # POINT SUBGOALS
         orig_image = cv2.circle(orig_image, tuple(sub1_center), 5, 223, -1)
         orig_image = cv2.circle(orig_image, tuple(sub5_center), 5, 224, -1)
-        # show gripper action direction wwhole image or just direction
-        arrow_x1, arrow_x2 = self.set_point_to_bound(self.old_gripper_image_points[1]), self.set_point_to_bound(
-            self.new_gripper_image_points[1])
-        arrow_y1, arrow_y2 = self.set_point_to_bound(self.old_gripper_image_points[0]), self.set_point_to_bound(
-            self.new_gripper_image_points[0])
+        # show gripper action direction whole image or just direction
+        arrow_x1, arrow_x2 = self.set_point_to_bound(self.last_gripper_image_points[1]), self.set_point_to_bound(
+            self.current_gripper_image_points[1])
+        arrow_y1, arrow_y2 = self.set_point_to_bound(self.last_gripper_image_points[0]), self.set_point_to_bound(
+            self.current_gripper_image_points[0])
         norm_point_2 = 33 + (np.asarray([arrow_x2, arrow_y2]) - np.asarray([arrow_x1, arrow_y1]))
-        arrowed_image = cv2.arrowedLine(np.ones((self.image_size, self.image_size)) * 221, (arrow_x1, arrow_y1),
-                                        (arrow_x2, arrow_y2), 222, 5)
-        arrowed_image_small = cv2.arrowedLine(np.ones((65, 65)) * 221, (33, 33), (norm_point_2[1], norm_point_2[0]),
-                                              222, 2)
+        arrowed_image_small = cv2.arrowedLine(np.ones((65, 65)) * 221, (33, 33), (norm_point_2[1], norm_point_2[0]), 222, 2)
         # plot debug text
         debug_text_image = np.ones((250, 250)) * 221
         debug_text_image = cv2.putText(debug_text_image, "Contact: " + str(int(self.contact_with_obj)), (10, 100),
                                        cv2.FONT_HERSHEY_SIMPLEX, 0.75, 223, 3, cv2.LINE_AA)
-        debug_text_image = cv2.putText(debug_text_image, "closest dis: " + str(round(min(self.obj_distances), 4)),
-                                       (10, 200), cv2.FONT_HERSHEY_SIMPLEX, 0.65, 223, 3, cv2.LINE_AA)
         # plot images
         self.plt_fig, self.plt_obj = plotImage(self.image_size, 5, self.plt_fig, self.plt_obj, self.path_img,
                                                orig_image, self.local_window, self.reconstruction, arrowed_image_small,

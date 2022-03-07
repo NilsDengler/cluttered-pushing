@@ -31,7 +31,6 @@ def transform_world_point_to_camera_space(point, view_matrix):
         Purpose: Project a 3D world point into camera space.
         '''
     ps_homogeneous = np.append(point, 1.)
-    print(np.array(view_matrix).reshape(4, 4), ps_homogeneous)
     ps_transformed = np.dot(np.array(view_matrix).reshape(4, 4).T, ps_homogeneous.T).T
     return ps_transformed[:3]
 

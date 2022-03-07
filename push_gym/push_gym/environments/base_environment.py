@@ -44,6 +44,7 @@ class BasePybulletEnv(gym.Env, EzPickle, metaclass=ABCMeta):
 
         self._p.configureDebugVisualizer(self._p.COV_ENABLE_GUI, 0)
         self._p.setPhysicsEngineParameter(enableFileCaching=0)
+        self._p.setPhysicsEngineParameter(numSolverIterations=200)
         self._p.setTimeStep(1. / self.step_size_fraction)
 
         if render:

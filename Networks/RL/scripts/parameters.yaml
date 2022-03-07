@@ -4,7 +4,7 @@ utils: "../../../push_gym/push_gym/utils/utils.py"
 curriculum_tasks_file_name:  "../../../push_gym/push_gym/tasks/curriculum_tasks.py"
 tf_model_path: "../../VAE/saved_model/model_example_vae"
 evaluation_save_path: "../../../push_gym/push_gym/evaluation/evaluation_folders/example_evaluation/"
-log_dir_name: "../Logs/example_agent/model_1/"
+log_dir_name: "../Logs/example_agent/model_7/"
 tensorboard_log_name: "example_agent_model_1"
 train: False
 load_model: False

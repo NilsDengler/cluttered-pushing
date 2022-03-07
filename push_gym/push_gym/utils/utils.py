@@ -414,7 +414,7 @@ class Utils:
         obj_id = self._p.loadURDF(os.path.join(os.path.dirname(__file__), BLOCK_URDF_PATH),
                                   basePosition=[xpos, ypos, zpos], baseOrientation=list(yaw),
                                   physicsClientId=self.client_id)
-        self._p.changeDynamics(obj_id, -1,mass=1, lateralFriction=.25, rollingFriction=0.0001)
+        self._p.changeDynamics(obj_id, -1, mass=1, lateralFriction=.5, rollingFriction=0.0001)
         return obj_id
 
     def get_cube_obj(self):
@@ -1005,7 +1005,7 @@ class Utils:
             self._p.addUserDebugLine([og[0], og[1], 0.02], [og_x[0], og_x[1], 0.02], [0, 0, 1],
                                      replaceItemUniqueId=self.single_vec, physicsClientId=self.client_id)
 
-    def debug_gui_target(self, t_pose, ori):
+    def debug_gui_target(self, t_pose):
         # r = R.from_euler('xyz',ori, degrees=False)
         # t_pose = np.matmul(pose, r.as_matrix())
         if self.x_id < 0:
