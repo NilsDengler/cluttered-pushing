@@ -1,0 +1,20 @@
+env_file_name: "../../../push_gym/push_gym/tasks/pushing.py"
+train_file_name: "parameters.yaml"
+utils: "../../../push_gym/push_gym/utils/utils.py"
+curriculum_tasks_file_name:  "../../../push_gym/push_gym/tasks/curriculum_tasks.py"
+tf_model_path: "../../VAE/saved_model/model_example_vae"
+evaluation_save_path: "../../../push_gym/push_gym/evaluation/evaluation_folders/example_evaluation/"
+log_dir_name: "../Logs/example_agent/model_1/"
+tensorboard_log_name: "example_agent_model_1"
+train: False
+load_model: False
+curriculum: True
+Algorithm: "TQC"
+policy: "MlpPolicy"
+max_timesteps: 20000000
+env_name: 'pushingGUI-v0'
+end_effector: "gripper" # gripper or rod
+obstacle_num: 0
+arm_position: [0.0, -0.198, 0.021]
+test_baseline: False
+json_file_path: "../../../push_gym/push_gym/evaluation/evaluation_samples/environment_sample_wo_obst.txt"

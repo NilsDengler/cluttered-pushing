@@ -1,0 +1,15 @@
+Train: True
+data_file_path: "../train_data/example_data.h5"
+model_save_path: "../saved_model/model_example_vae/"
+checkpoint_path: "../saved_model/checkpoint_example_vae/"
+eval_picture_save_path: "../eval_imgs_example_vae/"
+parameter_save_path: "parameters.yaml"
+batch_size: 256
+learning_rate: 1e-4
+latent_dim: 32
+kl_weight: 0.5
+model_save_rate: 1
+picture_save_rate: 1
+independent: "bernoulli"
+epochs: 10
+img_size: 64
