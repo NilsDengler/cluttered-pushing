@@ -13,9 +13,9 @@ class Corridors:
 
     def __init__(self, sim):
         #approach parameter
-        self.workspace_size = [256, 256] #[64, 53] #[256, 128] # to be used in bresenham
+        self.workspace_size = [256, 256]
         self.object_diameter = 0.06
-        self.arm_diameter = self.object_diameter#*3/4
+        self.arm_diameter = self.object_diameter
         self.params = None
         self.target_reached_thres = 0.05
         # static simulation parameters
@@ -72,7 +72,7 @@ class Corridors:
             x_trans, y_trans = np.random.uniform(0.08, 0.1) * np.random.choice([-1, 1]), np.random.uniform(0.08, 0.1) * np.random.choice([-1, 1])
             arm_pose = np.asarray(get_point(self.pushing_object_id, self._p, self.client_id)) - [x_trans, y_trans, 0.01]
             target_joint_states = self.sim.get_ik_joints(arm_pose, [np.pi, 0, 0], self._robot_tool_center)[:6]
-            self.sim._reset_arm_fixed(target_joint_states)
+            self.sim._reset_arm(target_joint_states)
 
         self.alphas = []
         self.error_trace = []
@@ -94,11 +94,11 @@ class Corridors:
             self.prior_target = target
             target = self.look_ahead_target(self.get_pos_on_grid(prior_conf), path, borders)
             self.alphas.append(self.abs_angle(self.angle(self.get_real_pos(target) - prior_conf, prior_conf - self.arm_pose)))
-            self.pushing(self.get_real_pos(target), prior_conf)
+            self.pushing(prior_conf)
             #contact is true when arm touches object, otherwise false
-            collision = self.sim.col.check_for_collision_object()
-            collision = (collision or self.sim.col.check_for_collision_EE())
-            obj_contact = self.sim.col.object_contact()
+            collision = self.sim.utils.check_for_collision_object()
+            collision = (collision or self.sim.utils.check_for_collision_EE())
+            obj_contact = self.sim.utils.object_contact()
             if obj_contact and not self.sim.first_object_contact:
                 self.sim.first_object_contact = True
             self.new_arm_pose = np.array(self.sim._get_link_world_pose(self.robot_arm_id, self._robot_tool_center)[0])
@@ -122,7 +122,7 @@ class Corridors:
         self.sim.eval.write_evaluation(is_RL=False)
         return self.grid
 
-    def pushing(self, target, object):
+    def pushing(self, object):
         K_mu = 0.05 #0.01
         K_gamma = 0.1 #0.1
         act_push, act_relocate, alpha_p = self.act_push()
@@ -151,7 +151,7 @@ class Corridors:
         else:
             theta_u = theta_v - K_mu*sum(self.error_trace)/len(self.error_trace) - K_gamma*self.error_trace[-1]
         action = np.array([np.cos(theta_u), np.sin(theta_u), 0])
-        self.sim._move_arm_2d(action)
+        self.sim._move_to_position(action)
         self.sim.step_simulation(1)
 
     def act_push(self):
@@ -210,8 +210,6 @@ class Corridors:
             c_index = np.argmin(np.sqrt(np.square(np.array(path[:, 0] - start[0], dtype=np.float32)) + np.square(np.array(path[:, 1] - start[1], dtype=np.float32))))
             c = path[c_index]
             w_index = np.argmin(np.sqrt(np.square(np.array(borders[:, 0] - start[0], dtype=np.float32)) + np.square(np.array(borders[:, 1] - start[1], dtype=np.float32))))
-            w = borders[w_index]
-            #l = borders[w_index+1] - borders[w_index-1]
         else:
             return path[-1]
 
@@ -679,7 +677,6 @@ class Corridors:
             6: pushing border (space for arm not to move in)
             7: object border (space for object not to move in)
         """
-        picture = np.zeros(self.workspace_size, dtype=np.uint8) #size change (256, 256
         cpp_grid = self.grid.copy().astype(np.uint8)
         cpp_grid[cpp_grid == 5] = 255
         cpp_grid[cpp_grid < 5] = 0
@@ -707,7 +704,6 @@ class Corridors:
             6: pushing border (space for arm not to move in)
             7: object border (space for object not to move in)
         """
-        picture = np.zeros(self.workspace_size, dtype=np.uint8) #size change (256, 256
         cpp_grid = self.grid.copy()
         cpp_grid = np.where(cpp_grid > 4, cpp_grid, 1)
         cpp_grid = np.where(cpp_grid != 5, cpp_grid, 256*256)

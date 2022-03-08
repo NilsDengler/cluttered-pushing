@@ -1,25 +1,7 @@
-import matplotlib.pyplot as plt
 import numpy as np
 import cv2
-import random
-import glob
-import sys, os
-import math
-import pybullet_data
-import scipy.misc
-from skimage.draw import line, polygon
-from custom_utils import load_model, TURTLEBOT_URDF, joints_from_names, \
-    set_joint_positions, HideOutput, get_bodies, sample_placement, pairwise_collision, \
-    set_point, Point, create_box, stable_z, TAN, GREY, connect, PI, OrderedSet, \
-    wait_if_gui, dump_body, set_all_color, BLUE, child_link_from_joint, link_from_name, draw_pose, Pose, pose_from_pose2d, \
-    get_random_seed, get_numpy_seed, set_random_seed, set_numpy_seed, plan_joint_motion, plan_nonholonomic_motion, \
-    joint_from_name, safe_zip, draw_base_limits, BodySaver, WorldSaver, LockRenderer, elapsed_time, disconnect, flatten, \
-    INF, wait_for_duration, get_unbuffered_aabb, draw_aabb, DEFAULT_AABB_BUFFER, get_link_pose, get_joint_positions, \
-    get_subtree_aabb, get_pairs, get_distance_fn, get_aabb, set_all_static, step_simulation, get_bodies_in_region, \
-    AABB, update_scene, Profiler, pairwise_link_collision, BASE_LINK, get_collision_data, draw_pose2d, \
-    normalize_interval, wrap_angle, CIRCULAR_LIMITS, wrap_interval, Euler, rescale_interval, adjust_path, WHITE, RED, \
-    sample_pos_in_env, remove_body, get_euler, get_point, get_config, reset_sim, set_pose, get_quat,euler_from_quat, \
-    quat_from_euler, pixel_from_point, create_cylinder, create_capsule, create_sphere
+import os
+from custom_utils import get_config, euler_from_quat
 class Eval:
     def __init__(self, sim, utils):
         self.sim = sim
@@ -60,14 +42,14 @@ class Eval:
     def write_evaluation(self, is_RL=True):
         if self.sim.save_evaluations:
             os.makedirs(self.sim.evaluation_save_path, exist_ok=True)
-            self.cam.save_np(np.asarray(self.success_list), self.evaluation_save_path + "success_list.npy")
+            self.utils.save_np(np.asarray(self.success_list), self.sim.evaluation_save_path + "success_list.npy")
             if is_RL:
-                self.cam.save_np(np.asarray(self.reward_list), self.evaluation_save_path + "reward_list.npy")
-                self.cam.save_np(np.asarray(self.run_length_list), self.evaluation_save_path + "run_length_list.npy")
-            self.cam.save_np(np.asarray(self.collision_list), self.evaluation_save_path + "collision_list.npy")
-            self.cam.save_np(np.asarray(self.contact_list), self.evaluation_save_path + "contact_list.npy")
-            self.cam.save_np(np.asarray(self.path_length_list), self.evaluation_save_path + "path_length_list.npy")
-            self.cam.save_np(np.asarray(self.shortest_path_length_list), self.evaluation_save_path + "shortest_path_length_list.npy")
+                self.utils.save_np(np.asarray(self.reward_list), self.sim.evaluation_save_path + "reward_list.npy")
+                self.utils.save_np(np.asarray(self.run_length_list), self.sim.evaluation_save_path + "run_length_list.npy")
+            self.utils.save_np(np.asarray(self.collision_list), self.sim.evaluation_save_path + "collision_list.npy")
+            self.utils.save_np(np.asarray(self.contact_list), self.sim.evaluation_save_path + "contact_list.npy")
+            self.utils.save_np(np.asarray(self.path_length_list), self.sim.evaluation_save_path + "path_length_list.npy")
+            self.utils.save_np(np.asarray(self.shortest_path_length_list), self.sim.evaluation_save_path + "shortest_path_length_list.npy")
 
 
     def collect_evaluation_data(self, current_pose, last_pose, current_arm, last_arm, obj_contact, collision):
@@ -207,19 +189,4 @@ class Eval:
         img = self.sim.baseline.initial_path_img.copy()
         self.line_drawing_baseline(self.current_arm_trajectory, img, [0,0,0])
         self.line_drawing_baseline(self.current_path, img, [255,0,0])
-        cv2.imwrite(self.evaluation_save_path + "path_img_"+ str(self.global_count) + ".png", img)
-
-
-    # def shortest_and_normal_path_baseline(self, reached):
-    #     #save shortest path length
-    #     shortest_img = self.sim.baseline.initial_path_img.copy()
-    #     colours, counts = np.unique(shortest_img.reshape(-1, 3), axis=0, return_counts=1)
-    #     shortest_path_length = counts[1]#(256*256) - np.count_nonzero(shortest_img[:,:] == [0,255,0])
-    #     self.shortest_path_length_list.append(shortest_path_length)
-    #     #self.shortest_path_length_list.append(shortest_path)
-    #     #save path length
-    #     self.current_path.append([self.current_path[-1][0],self.sim.goal_obj_conf[0]])
-    #     path_img = self.line_drawing_baseline(self.current_path, np.zeros((256,256)), 255, size=1)
-    #     #test = path_img + cv2.cvtColor(shortest_img, cv2.COLOR_BGR2GRAY)
-    #     self.path_length_list.append(np.count_nonzero(path_img == 255))
-    #     self.current_path.clear()
+        cv2.imwrite(self.sim.evaluation_save_path + "path_img_"+ str(self.global_count) + ".png", img)

@@ -114,6 +114,7 @@ class Pushing(ArmSim):
         self.obstacle_num = obstacle_num
         self.encoder_model = encoder_model
         self.evaluation_save_path = evaluation_save_path
+        print(self.evaluation_save_path)
         self.with_evaluation = with_evaluation
         self.with_local_window = with_local_window
         self.with_sparse_reward = with_sparse_reward
