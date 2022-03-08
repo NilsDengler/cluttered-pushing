@@ -7,7 +7,7 @@ sys.path.append(os.path.join(os.path.dirname(__file__), '../../../push_gym/push_
 sys.path.append(os.path.join(os.path.dirname(__file__), '../../../push_gym/push_gym/environments/'))
 sys.path.append(os.path.join(os.path.dirname(__file__), '../../../push_gym/push_gym/utils/'))
 sys.path.append(os.path.join(os.path.dirname(__file__), '../../../push_gym/push_gym/utils/plot_scripts'))
-sys.path.append(os.path.join(os.path.dirname(__file__), '../../../push_gym/push_gym/utils/Lazy-Theta-with-optimization-any-angle-pathfinding/build'))
+sys.path.append(os.path.join(os.path.dirname(__file__), '../../../push_gym/push_gym/utils/Lazy-Theta-with-optimization-any-angle-pathfinding/build/'))
 sys.path.append(os.path.join(os.path.dirname(__file__), '../../../push_gym/push_gym/envs/'))
 sys.path.append(os.path.join(os.path.dirname(__file__), '../../../push_gym/push_gym/baseline_approach/'))
 sys.path.append(os.path.join(os.path.dirname(__file__), '../../../push_gym/push_gym/evaluation/'))
