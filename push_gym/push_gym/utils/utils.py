@@ -6,7 +6,6 @@ sys.path.append(os.path.join(os.path.dirname(__file__), "../"))
 import numpy as np
 import cv2
 import random
-import transforms as tfs
 import warnings
 import matplotlib
 import os
@@ -100,9 +99,8 @@ class Utils:
     def process_pixel_to_3dpoint(self, p, current_true_depth, workspace_bounds):
         z = current_true_depth[p[1]][p[0]]
         unprocessed_point = self.twoD_to_threeD(p, z)
-        camera_pose = tfs.get_cam_world_pose_from_view_matrix(self.view_matrix)
-        world_points = tfs.transform_3Dpoint(camera_pose, np.array(unprocessed_point))
-        #world_points = tfs.transform_camera_space_to_world_point(np.array(unprocessed_point), self.cam.view_matrix)
+        camera_pose = self.get_cam_world_pose_from_view_matrix(self.view_matrix)
+        world_points = self.transform_3Dpoint(camera_pose, np.array(unprocessed_point))
         world_points[2] = workspace_bounds[2][0]
         return world_points
 
@@ -132,8 +130,8 @@ class Utils:
         return np.load(path)
 
     def get_pos_in_image(self, pos):
-        obj_pos_in_cam = tfs.transform_world_point_to_camera_space(pos, self.view_matrix)
-        pixel_points = np.asarray(tfs.camera_to_image_point(self.intrinsic_matrix, obj_pos_in_cam))
+        obj_pos_in_cam = self.transform_world_point_to_camera_space(pos, self.view_matrix)
+        pixel_points = np.asarray(self.camera_to_image_point(self.intrinsic_matrix, obj_pos_in_cam))
         pixel_points[0, 0] = self.image_size - pixel_points[0, 0]
         pixel_points = np.clip(pixel_points[0,:],0,255)
         return list(pixel_points)
@@ -177,13 +175,16 @@ class Utils:
         depth_wo_arm[depth_wo_arm <= 218] = 255
         depth_wo_arm[depth_wo_arm < 220] = 1
         depth_wo_arm[depth_wo_arm >= 220] = 0
-        depth_wo_obj = floodfill(depth_wo_arm.copy(), obj_pixel_pos)
         kernel_dilate = (np.ones((7, 7), np.float32)) / 49
         kernel_erode = (np.ones((3, 3), np.float32)) / 9
-        depth_only_obstacles = cv2.erode(depth_wo_obj.copy(), kernel_erode, iterations=1)
+        depth_only_obstacles = cv2.erode(depth_wo_arm.copy(), kernel_erode, iterations=2)
         depth_only_obstacles = cv2.dilate(depth_only_obstacles, kernel_dilate, iterations=3)
         depth_only_obstacles = floodfill(depth_only_obstacles.copy(), obj_pixel_pos)
         return depth_only_obstacles
+
+    ######################################
+    '''Transforms'''
+    ######################################
 
     def rotate_image_and_get_point(self, image, obj_config, with_object_ori=False, with_subgoal_ori=False):
         """
@@ -281,7 +282,7 @@ class Utils:
         denoised_image[denoised_image == 0] = 221
         return denoised_image, frame_corners
 
-    def get_transformed_point(self,point, rot_matrix):
+    def get_transformed_point(self, point, rot_matrix):
         extended_object_center = np.append(point, [1])
         return np.matmul(rot_matrix, extended_object_center).astype(np.int)
 
@@ -294,6 +295,47 @@ class Utils:
                 and transformed_pixel[0,1] < self.new_center[0, 1] + 32:
             return True
         else: return False
+
+    def transform_world_point_to_camera_space(self, point, view_matrix):
+        ps_homogeneous = np.append(point, 1.)
+        ps_transformed = np.dot(np.array(view_matrix).reshape(4, 4).T, ps_homogeneous.T).T
+        return ps_transformed[:3]
+
+    def camera_to_image_points(self, intrinsics, camera_points):
+        u0 = intrinsics[0, 2]
+        v0 = intrinsics[1, 2]
+        fx = intrinsics[0, 0]
+        fy = intrinsics[1, 1]
+
+        image_coordinates = np.empty((camera_points.shape[0], 2), dtype=np.int64)
+        for i in range(camera_points.shape[0]):
+            image_coordinates[i, 0] = int(np.round((camera_points[i, 0] * fx / camera_points[i, 2]) + u0))
+            image_coordinates[i, 1] = int(np.round((camera_points[i, 1] * fy / camera_points[i, 2]) + v0))
+
+        return image_coordinates
+
+    def camera_to_image_point(self, intrinsics, camera_points):
+        u0 = intrinsics[0, 2]
+        v0 = intrinsics[1, 2]
+        fx = intrinsics[0, 0]
+        fy = intrinsics[1, 1]
+
+        image_coordinates = np.empty((1, 2), dtype=np.int64)
+        image_coordinates[0, 0] = int(np.round((camera_points[0] * fx / camera_points[2]) + u0))
+        image_coordinates[0, 1] = int(np.round((camera_points[1] * fy / camera_points[2]) + v0))
+        return image_coordinates
+
+    def transform_3Dpoint(self, t, point):
+        ps_homogeneous = np.append(point, 1.)
+        ps_transformed = np.dot(t, ps_homogeneous.T).T
+        return ps_transformed[:3]
+
+    def get_cam_world_pose_from_view_matrix(self, view_matrix):
+        cam_pose = np.linalg.inv(np.array(view_matrix).reshape(4, 4).T)
+        cam_pose[:, 1:3] = -cam_pose[:, 1:3]
+        return cam_pose
+
+
 
     ######################################
     '''Collision functions'''

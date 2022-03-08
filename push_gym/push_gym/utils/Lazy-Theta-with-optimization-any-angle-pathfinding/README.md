@@ -1,5 +1,7 @@
 # Lazy Theta* with optimization pathfinding
-This is a customized version of Lazy-Theta-with-optimization-any-angle-pathfinding. Given a map and a set of starts and goals, this algorithm can return an optimal path. This repo has very easy-to-build-and-use C++ implementation and Python wrapper.
+This is an Fork of the get_angle_of_two_points repository by zehuili: https://github.com/zehuilu/Lazy-Theta-with-optimization-any-angle-pathfinding
+
+It is a customized version of Lazy-Theta-with-optimization-any-angle-pathfinding. Given a map and a set of starts and goals, this algorithm can return an optimal path. This repo has very easy-to-build-and-use C++ implementation and Python wrapper.
 
 
 This repo has been tested with:

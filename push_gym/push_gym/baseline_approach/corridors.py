@@ -1,4 +1,9 @@
- #!/usr/bin/python3
+"""
+Code is based on the approach by Krivic et al.
+Please refer to them for more information:
+https://link.springer.com/article/10.1007/s10514-018-9804-8
+"""
+#!/usr/bin/python3
 import numpy as np
 from custom_utils import get_config, euler_from_quat, get_point
 import LazyThetaStarPython
