@@ -6,3 +6,6 @@
 - To train an example VAE, download the .h5 file from TODO and place it in ```train_data```.
 - check ```scripts/parametes.yaml```.
 - run ```python scripts/run_vae.py```.
+##Demo:
+You can find trained example VAEs here: https://cloud.vi.cs.uni-bonn.de/index.php/s/xjaZ39Gjd3RaPpP
+
