@@ -5,6 +5,7 @@ import matplotlib
 matplotlib.use('TkAgg')
 import numpy as np
 import gym
+from gym import spaces
 import math
 import random
 import cv2
@@ -128,7 +129,7 @@ class Pushing(ArmSim):
     def _set_action_space(self):
         self.arm_normalization_value = 0.05
         self.yaw_normalization_value = 0.01
-        self.action_space = gym.spaces.Box(low=-1, high=1, shape=(3,), dtype=np.float32)
+        self.action_space = spaces.Box(low=-1, high=1, shape=(3,), dtype=np.float32)
 
     def _set_observation_space(self):
         """
@@ -175,7 +176,7 @@ class Pushing(ArmSim):
         assert len(self.obs_bound_high) == len(self.obs_bound_low), "high and low bound of unequal length"
 
         self.observ_dim = len(self.obs_bound_high)
-        self.observation_space = gym.spaces.Box(np.array(self.obs_bound_high), np.array(self.obs_bound_low),
+        self.observation_space = spaces.Box(np.array(self.obs_bound_high), np.array(self.obs_bound_low), 
                                                 dtype=np.float32)
         return
 
@@ -467,7 +468,7 @@ class Pushing(ArmSim):
             if self.curriculum_difficulty < self.max_curriculum_iteration_steps - 1:
                 self.curriculum_difficulty += 1
             self.change_curriculum_difficulty = False
-        self.curric.close_to_far_curriculum_fixed_obstacles(self.curriculum_difficulty)
+        self.curric.close_to_far_curriculum(self.curriculum_difficulty)
 
     ######################################
     '''Helper functions'''
