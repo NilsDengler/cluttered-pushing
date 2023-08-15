@@ -17,17 +17,28 @@ def load_encoder(model_path):
 
 def test_agent(tf_model_path, evaluation_save_path, log_dir_name, obstacle_num, env_name, arm_position, test_baseline,
                json_file_path):
+    
+    # check log dir exists
+    if not os.path.exists(log_dir_name):
+        raise Exception(f'log dir {log_dir_name} does not exist')
+    
+    # check tf model exists
+    if not os.path.exists(tf_model_path):
+        raise Exception(f'tf model {tf_model_path} does not exist')
+
     #load VAE encoder
     tf_model = load_encoder(tf_model_path)
     #specify evaluation file
     evaluation_samples = None
     with_json = False
     if with_json:
+        # check json file exists
+        if not os.path.exists(json_file_path):
+            raise Exception(f'json file {json_file_path} does not exist')
         with open(os.path.join(os.path.dirname(__file__), json_file_path)) as json_file:
             evaluation_samples = json.load(json_file)
 
-    env = gym.make(env_name)
-    env = make_vec_env(env, n_envs=1)
+    env = make_vec_env(env_name, n_envs=1)
     env.envs[0].env.setup_for_RL(tf_model, obstacle_num, arm_position, False, evaluation_save_path, False)
     eval_max_range = 1000
     if evaluation_samples:
@@ -40,7 +51,15 @@ def test_agent(tf_model_path, evaluation_save_path, log_dir_name, obstacle_num, 
             _ = env.envs[0].env.baseline.create_corridors()
 
     else:
-        saved_model_path = log_dir_name + "intermediate_saved_model"
+        if os.path.exists(log_dir_name + "intermediate_saved_model.zip"):
+            saved_model_path = log_dir_name + "intermediate_saved_model"
+        elif os.path.exists(log_dir_name + "final_model.zip"):
+            print("\033[93m" + f'intermediate_saved_model does not exist in {log_dir_name}' + "\033[0m")
+            print("\033[93m" + f'Trying final_model' + "\033[0m")
+            saved_model_path = log_dir_name + "final_model"
+        else:
+            raise Exception(f'No intermediate or final model found in {log_dir_name}')
+
         model = TQC.load(saved_model_path, env=env)
         for i in tqdm(range(eval_max_range)):
             if evaluation_samples:
@@ -52,4 +71,4 @@ def test_agent(tf_model_path, evaluation_save_path, log_dir_name, obstacle_num, 
             while not Done:
                 action, _states = model.predict(obs, deterministic=True)
                 obs, reward, Done, info = env.step(action)
-    env.close()
+    env.envs[0].env.close()

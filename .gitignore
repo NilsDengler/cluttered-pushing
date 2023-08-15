@@ -1,0 +1,8 @@
+# ignore all __pycache__ directories
+__pycache__/
+
+# ignore all *.pyc files
+*.pyc
+
+# ignore all *.egg-info directories
+*.egg-info/

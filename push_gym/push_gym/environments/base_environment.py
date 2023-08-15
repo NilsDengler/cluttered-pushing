@@ -33,14 +33,14 @@ class BasePybulletEnv(gym.Env, EzPickle, metaclass=ABCMeta):
 
         self._p = bullet_client.BulletClient(connection_mode=render_option)
         self._egl_plugin = None
-        if use_egl:
-            assert sys.platform == 'linux', ('EGL rendering is only supported on ''Linux.')
-            egl = pkgutil.get_loader('eglRenderer')
-            if egl:
-                self._egl_plugin = self._p.loadPlugin(egl.get_filename(),'_eglRendererPlugin')
-            else:
-                self._egl_plugin = self._p.loadPlugin('eglRendererPlugin')
-            print('EGL renderering enabled.')
+        # if use_egl:
+        #     assert sys.platform == 'linux', ('EGL rendering is only supported on ''Linux.')
+        #     egl = pkgutil.get_loader('eglRenderer')
+        #     if egl:
+        #         self._egl_plugin = self._p.loadPlugin(egl.get_filename(),'_eglRendererPlugin')
+        #     else:
+        #         self._egl_plugin = self._p.loadPlugin('eglRendererPlugin')
+        #     print('EGL renderering enabled.')
 
         self._p.configureDebugVisualizer(self._p.COV_ENABLE_GUI, 0)
         self._p.setPhysicsEngineParameter(enableFileCaching=0)

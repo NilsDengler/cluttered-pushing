@@ -250,16 +250,16 @@ class Utils:
         # Apply the transform
         result = cv2.warpAffine(image,self.affine_mat,(new_w, new_h),flags=cv2.INTER_LINEAR)
         extended_object_center = np.append(old_object_center, [1])
-        new_oc = np.matmul(self.affine_mat, extended_object_center).astype(np.int)
+        new_oc = np.matmul(self.affine_mat, extended_object_center).astype(np.int32)
 
         cp_1 = [new_oc[0,0] - 32, new_oc[0,1] - 32 ]
         cp_2 = [new_oc[0,0] + 32, new_oc[0,1] - 32 ]
         cp_3 = [new_oc[0,0] + 32, new_oc[0,1] + 32 ]
         cp_4 = [new_oc[0,0] - 32, new_oc[0,1] + 32 ]
-        cp_1 = np.matmul(inv_affine_mat,  np.append(cp_1, [1])).astype(np.int).tolist()[0]
-        cp_2 = np.matmul(inv_affine_mat,  np.append(cp_2, [1])).astype(np.int).tolist()[0]
-        cp_3 = np.matmul(inv_affine_mat,  np.append(cp_3, [1])).astype(np.int).tolist()[0]
-        cp_4 = np.matmul(inv_affine_mat,  np.append(cp_4, [1])).astype(np.int).tolist()[0]
+        cp_1 = np.matmul(inv_affine_mat,  np.append(cp_1, [1])).astype(np.int32).tolist()[0]
+        cp_2 = np.matmul(inv_affine_mat,  np.append(cp_2, [1])).astype(np.int32).tolist()[0]
+        cp_3 = np.matmul(inv_affine_mat,  np.append(cp_3, [1])).astype(np.int32).tolist()[0]
+        cp_4 = np.matmul(inv_affine_mat,  np.append(cp_4, [1])).astype(np.int32).tolist()[0]
         return result, new_oc, [cp_1, cp_2, cp_3, cp_4]
 
     def get_local_window(self, depth_img, obj_config, local_window_size):
@@ -284,7 +284,7 @@ class Utils:
 
     def get_transformed_point(self, point, rot_matrix):
         extended_object_center = np.append(point, [1])
-        return np.matmul(rot_matrix, extended_object_center).astype(np.int)
+        return np.matmul(rot_matrix, extended_object_center).astype(np.int32)
 
     def ee_is_in_lw(self):
         pixel_points = self.get_pos_in_image(self.sim.tool_tip_pose[0])
