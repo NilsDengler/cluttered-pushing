@@ -1,12 +1,12 @@
 #!/usr/bin/python3
-from base_environment import BasePybulletEnv
+from push_gym.environments.base_environment import BasePybulletEnv
 import pybullet as p
 import numpy as np
 import gym
 import os
 import math
 import time
-from custom_utils import euler_from_quat, quat_from_euler
+from push_gym.utils.custom_utils import euler_from_quat, quat_from_euler
 UR5_URDF_PATH = "../robots/assets/ur5_with_gripper/ur5.urdf"
 UR5_WORKSPACE_URDF_PATH = '../robots/assets/ur5_with_gripper/workspace.urdf'
 PLANE_URDF_PATH = '../robots/assets/plane/plane.urdf'

@@ -1,2 +1,5 @@
 tensorboard_logs/*
 Logs/*
+__pycache__/*
+Logs/__pycache__/*
+scripts/__pycache__/*

@@ -4,15 +4,10 @@ from arm_sim import ArmSim
 from pybullet_cam import PyCam as Cam
 from pybullet_environment_building import EnvBuild as build
 from pybullet_collision_checker import ColCheck as collision
-from debug_points import SphereMarker
 import matplotlib
 matplotlib.use('TkAgg')
-#import warnings
-#warnings.filterwarnings("ignore")
-import matplotlib.pyplot as plt
 import numpy as np
 import os
-import random
 from tqdm import tqdm
 import cv2
 import tensorflow as tf
@@ -28,13 +23,10 @@ from custom_utils import load_model, TURTLEBOT_URDF, joints_from_names, \
     normalize_interval, wrap_angle, CIRCULAR_LIMITS, wrap_interval, Euler, rescale_interval, adjust_path, WHITE, \
     sample_pos_in_env, remove_body, get_euler, get_point, get_config, reset_sim, set_pose, get_quat,euler_from_quat, \
     quat_from_euler, pixel_from_point, set_client, RED, create_cylinder
-import threading
 from plt_utils import plotImage
 from collections import deque
 
 import json
-import yaml
-from yaml.loader import SafeLoader
 
 UR5_URDF_PATH = "../../robots/assets/ur5_with_gripper/ur5.urdf"
 UR5_WORKSPACE_URDF_PATH = '../../robots/assets/ur5_with_gripper/workspace.urdf'

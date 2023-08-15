@@ -1,6 +1,6 @@
 # ignore all __pycache__ directories
 __pycache__/
-
+push_gym/__pycache__/*
 # ignore all *.pyc files
 *.pyc
 

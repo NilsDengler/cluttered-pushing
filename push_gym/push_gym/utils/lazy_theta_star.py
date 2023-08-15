@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 import os
 import sys
-import LazyThetaStarPython
+from push_gym.utils.Lazy_Theta_with_optimization_any_angle_pathfinding.build import LazyThetaStarPython
 import numpy as np
 import matplotlib.pyplot as plt
 import cv2

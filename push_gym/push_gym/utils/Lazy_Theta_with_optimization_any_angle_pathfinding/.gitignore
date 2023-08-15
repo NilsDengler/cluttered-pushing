@@ -1,0 +1,5 @@
+*.out
+*.DS_Store
+/.vscode/*
+/build/*
+/src/__pycache__/*

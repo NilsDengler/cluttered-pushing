@@ -1,7 +1,7 @@
 import numpy as np
 import cv2
 import os
-from custom_utils import get_config, euler_from_quat
+from push_gym.utils.custom_utils import get_config, euler_from_quat
 class Eval:
     def __init__(self, sim, utils):
         self.sim = sim

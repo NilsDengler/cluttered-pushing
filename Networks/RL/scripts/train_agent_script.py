@@ -1,4 +1,3 @@
-import sys
 from stable_baselines3 import TD3, PPO, SAC
 from sb3_contrib import TQC
 from stable_baselines3.common.callbacks import EvalCallback
@@ -10,9 +9,6 @@ import numpy as np
 import torch
 import tensorflow as tf
 from stable_baselines3.common.env_util import make_vec_env
-from policy_network import CNN
-
-
 
 def load_encoder(model_path):
     model = tf.keras.models.load_model(model_path)

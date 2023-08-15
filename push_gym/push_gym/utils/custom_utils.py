@@ -24,7 +24,7 @@ from itertools import product, combinations, count, cycle, islice
 from multiprocessing import TimeoutError
 from contextlib import contextmanager
 
-from transformations import quaternion_from_matrix, unit_vector, euler_from_quaternion, quaternion_slerp
+from push_gym.utils.transformations import quaternion_from_matrix, unit_vector, euler_from_quaternion, quaternion_slerp
 
 directory = os.path.dirname(os.path.abspath(__file__))
 sys.path.append(os.path.join(directory, '../motion'))

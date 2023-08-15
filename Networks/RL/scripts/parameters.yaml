@@ -4,7 +4,7 @@ utils_file_name: "../../../push_gym/push_gym/utils/utils.py"
 curriculum_tasks_file_name:  "../../../push_gym/push_gym/tasks/curriculum_tasks.py"
 tf_model_path: "../../VAE/saved_model/example_vae_1"
 evaluation_save_path: "../../../push_gym/push_gym/evaluation/evaluation_folders/example_evaluation/"
-log_dir_name: "../Logs/example_agent/model_7/"
+log_dir_name: "../Logs/example_agent/model_test/"
 train: False
 load_model: False
 curriculum: True
@@ -15,5 +15,5 @@ env_name: 'pushingGUI-v0'
 end_effector: "gripper" # gripper or rod
 obstacle_num: 0
 arm_position: [0.0, -0.198, 0.021]
-test_baseline: False
+test_baseline: True
 json_file_path: "../../../push_gym/push_gym/evaluation/evaluation_samples/environment_sample_wo_obst.txt"

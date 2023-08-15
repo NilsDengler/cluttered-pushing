@@ -5,8 +5,8 @@ https://link.springer.com/article/10.1007/s10514-018-9804-8
 """
 #!/usr/bin/python3
 import numpy as np
-from custom_utils import get_config, euler_from_quat, get_point
-import LazyThetaStarPython
+from push_gym.utils.custom_utils import get_config, euler_from_quat, get_point
+from push_gym.utils.Lazy_Theta_with_optimization_any_angle_pathfinding.build import LazyThetaStarPython
 import cv2
 from skimage.draw import line as skline
 from skimage.draw import circle_perimeter as skcircle

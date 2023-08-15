@@ -11,8 +11,8 @@ import matplotlib
 import os
 import pybullet_data
 import glob
-from lazy_theta_star import floodfill
-from custom_utils import euler_from_quat, quat_from_euler, get_config, load_model, create_cylinder, create_capsule,\
+from push_gym.utils.lazy_theta_star import floodfill
+from push_gym.utils.custom_utils import euler_from_quat, quat_from_euler, get_config, load_model, create_cylinder, create_capsule,\
      create_sphere, sample_pos_in_env, set_pose, remove_body, WHITE, RED, get_point, get_quat
 
 BLOCK_URDF_PATH = '../robots/assets/block/block.urdf'

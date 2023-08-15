@@ -20,11 +20,11 @@ conda env create -f environment.yml -n <env_name>
 conda activate <env_name>
 ```
 
-Step 3: Install the pacakge
+Step 3: Install the package
 
 Dependencies:
 ```bash
-cd cluttered-pushing/push_gym/push_gym/utils/Lazy-Theta-with-optimization-any-angle-pathfinding
+cd cluttered-pushing/push_gym/push_gym/utils/Lazy_Theta_with_optimization_any_angle_pathfinding
 
 mkdir build && cd build
 
@@ -42,7 +42,7 @@ pip install -e .
 
 ## Usage
 
-Change directory to ```cluttered-pushing/RL```
+Change directory to ```cluttered-pushing/Networks/RL/scripts```
 ```bash
 cd cluttered-pushing/RL
 ```
@@ -58,7 +58,7 @@ hyperparameter in ```scripts/train_agent_script```.
 
 - To start training:
   ```bash
-  python scripts/run_agent.py
+  python run_agent.py
   ``` 
 
 ### Evaluation

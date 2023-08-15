@@ -1,6 +1,6 @@
 #!/usr/bin/python3
-from ur5_environment import ArmSim
-from utils import Utils
+from push_gym.environments.ur5_environment import ArmSim
+from push_gym.utils.utils import Utils
 import matplotlib
 matplotlib.use('TkAgg')
 import numpy as np
@@ -10,15 +10,15 @@ import math
 import random
 import cv2
 import tensorflow as tf
-from curriculum_tasks import Curriculum
-from lazy_theta_star import calculate_lazy_theta_star, floodfill
-from custom_utils import get_bodies, set_point, Point, Pose, get_point, get_config, reset_sim, euler_from_quat, \
+from push_gym.tasks.curriculum_tasks import Curriculum
+from push_gym.utils.lazy_theta_star import calculate_lazy_theta_star, floodfill
+from push_gym.utils.custom_utils import get_bodies, set_point, Point, Pose, get_point, get_config, reset_sim, euler_from_quat, \
     quat_from_euler
 import threading
-from plt_utils import plotImage
+from push_gym.utils.plot_scripts.plt_utils import plotImage
 from collections import deque
-from evaluation_function import Eval
-from corridors import Corridors
+from push_gym.evaluation.evaluation_function import Eval
+from push_gym.baseline_approach.corridors import Corridors
 
 class Pushing(ArmSim):
     def __init__(self,render=False, shared_memory=False, hz=240, use_egl=False):

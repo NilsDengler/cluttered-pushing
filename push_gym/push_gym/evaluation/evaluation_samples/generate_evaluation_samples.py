@@ -13,7 +13,7 @@ sys.path.append(default_path + 'utils/')
 sys.path.append(default_path + 'push_gym/push_gym/rl_env/')
 sys.path.append('/home/david/Arbeit/git/')
 sys.path.append(default_path + 'utils/astar-algorithm-cpp/build')
-sys.path.append(default_path + 'utils/Lazy-Theta-with-optimization-any-angle-pathfinding/build')
+sys.path.append(default_path + 'utils/Lazy_Theta_with_optimization_any_angle_pathfinding/build')
 
 import json
 # with open('./environment_sample_data.txt') as json_file:

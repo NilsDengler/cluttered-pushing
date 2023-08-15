@@ -1,21 +1,7 @@
 from test_agent_script import test_agent
 from train_agent_script import train_model
-import sys, os
 import yaml
 import inspect
-sys.path.append(os.path.join(os.path.dirname(__file__), '../../../push_gym/push_gym/'))
-sys.path.append(os.path.join(os.path.dirname(__file__), '../../../push_gym/push_gym/tasks/'))
-sys.path.append(os.path.join(os.path.dirname(__file__), '../../../push_gym/push_gym/environments/'))
-sys.path.append(os.path.join(os.path.dirname(__file__), '../../../push_gym/push_gym/utils/'))
-sys.path.append(os.path.join(os.path.dirname(__file__), '../../../push_gym/push_gym/utils/plot_scripts'))
-sys.path.append(os.path.join(os.path.dirname(__file__), '../../../push_gym/push_gym/utils/Lazy-Theta-with-optimization-any-angle-pathfinding/build/'))
-sys.path.append(os.path.join(os.path.dirname(__file__), '../../../push_gym/push_gym/envs/'))
-sys.path.append(os.path.join(os.path.dirname(__file__), '../../../push_gym/push_gym/baseline_approach/'))
-sys.path.append(os.path.join(os.path.dirname(__file__), '../../../push_gym/push_gym/evaluation/'))
-sys.path.append(os.path.join(os.path.dirname(__file__), '../../../push_gym/push_gym/plot_scripts/'))
-sys.path.append(os.path.join(os.path.dirname(__file__), '../../VAE/models/'))
-sys.path.append(os.path.join(os.path.dirname(__file__), '../../../push_gym/push_gym/rl_env/'))
-# print(sys.path)
 
 
 if __name__ == "__main__":
