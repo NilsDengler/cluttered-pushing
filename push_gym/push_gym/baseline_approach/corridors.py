@@ -50,6 +50,7 @@ class Corridors:
         self.init_obj_conf = get_config(self.pushing_object_id, self._p, self.client_id)
         #self.sim.debug_gui_target(np.asarray(self.sim.goal_obj_conf[0]), np.asarray(euler_from_quat(self.sim.goal_obj_conf[1])))
         borders = self.make_grid()
+        print("print 1")
         if self.with_astar:
             grid_py = np.array(self.gridToPy(), dtype=np.float32)
             path = np.array(pyastar2d.astar_path(grid_py[10:-10], self.get_pos_on_grid(self.init_obj_conf[0]) - np.array([10, 0]),
@@ -68,7 +69,7 @@ class Corridors:
                 self.grid = cv2.line(self.grid, (path[idx,1], path[idx,0]), (path[idx+1,1], path[idx+1,0]), 3,thickness=2)
         # visualize corridor
         #self.make_corridor(path)
-
+        print("print 2")
         initial_shortest_path = path
         self.initial_path_img = self.grid_to_pic()
 
@@ -78,7 +79,7 @@ class Corridors:
             arm_pose = np.asarray(get_point(self.pushing_object_id, self._p, self.client_id)) - [x_trans, y_trans, 0.01]
             target_joint_states = self.sim.get_ik_joints(arm_pose, [np.pi, 0, 0], self._robot_tool_center)[:6]
             self.sim._reset_arm(target_joint_states)
-
+        print("print 3")
         self.alphas = []
         self.error_trace = []
         self.A_k = []
@@ -86,13 +87,16 @@ class Corridors:
         self.sec_likelihood = 0
 
         self.arm_pose = np.array(self.sim._get_link_world_pose(self.robot_arm_id, self._robot_tool_center)[0][:2])
+        print("print 4")
         self.prior = self.get_prior()
+        print("print 4.1")
         prior_conf = np.array(get_config(self.pushing_object_id, self._p, self.client_id)[0][:2])
         self.moved = False
         reached = False
         index = 0
         successes = 0
         max_steps = 1200
+        print("print 4.2")
         while (not reached) and (index < max_steps):
             self.arm_pose = np.array(self.sim._get_link_world_pose(self.robot_arm_id, self._robot_tool_center)[0][:2])
             self.old_arm_pose = np.array(self.sim._get_link_world_pose(self.robot_arm_id, self._robot_tool_center)[0])
@@ -104,6 +108,7 @@ class Corridors:
             collision = self.sim.utils.check_for_collision_object()
             collision = (collision or self.sim.utils.check_for_collision_EE())
             obj_contact = self.sim.utils.object_contact()
+            print("print 5")
             if obj_contact and not self.sim.first_object_contact:
                 self.sim.first_object_contact = True
             self.new_arm_pose = np.array(self.sim._get_link_world_pose(self.robot_arm_id, self._robot_tool_center)[0])
@@ -115,6 +120,7 @@ class Corridors:
                     successes += 1
                     self.likelihood = (successes - 1)*self.likelihood/successes + 1/successes*np.exp(self.params[:, :, 1]*np.cos(self.alphas[-1] - self.params[:, :, 0]))/(2*np.pi*np.i0(self.params[:, :, 1]))
                     self.A_k.append(self.alphas[-1])
+            print("print 6")
             if self.distance(current_conf, self.sim.goal_obj_conf[0][:2]) < self.target_reached_thres:
                 reached = True
             index += 1
@@ -122,7 +128,7 @@ class Corridors:
                 self.sim.eval.collect_evaluation_data(current_conf, prior_conf, self.new_arm_pose, self.old_arm_pose,
                                                       obj_contact, collision)
             prior_conf = current_conf
-
+        print("print 7")
         self.sim.eval.calculate_evaluation_data_baseline(reached, current_conf, initial_shortest_path)
         self.sim.eval.write_evaluation(is_RL=False)
         return self.grid
@@ -189,18 +195,20 @@ class Corridors:
         K = 0
         k = 0
         quotient = 0
+        print("print 8")
         #integrate bessel function over k until quotient basically infinite
         while True:
-            if np.power(np.i0(k), c) < quotient:
+            if np.power(np.i0(k), c) <= quotient:
                 break
             else:
                 quotient = np.power(np.i0(k), c)
                 K += np.i0(R_0*k)/np.power(np.i0(k), c)
                 k += 1
-
+        print("print 9")
         self.params = np.ones((361, 101, 2)) #mu, k
         self.params[:, :, 0] *= np.transpose(np.array([np.linspace(0, 2*np.pi, 361) for i in range(101)])) #mu
         self.params[:, :, 1] *= np.array([np.linspace(0, 50, 101) for i in range(361)]) #k
+        print("print 10")
         return 1/K*(np.exp(R_0*self.params[:, :, 1]*np.cos(phi - self.params[:, :, 0]))/2*np.pi*np.power(np.i0(self.params[:, :, 1]), c))
 
 

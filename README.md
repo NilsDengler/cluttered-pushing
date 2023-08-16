@@ -61,8 +61,15 @@ hyperparameter in ```scripts/train_agent_script```.
   python run_agent.py
   ``` 
 
-### Evaluation
+### Testing
 - To evaluate a trained agent, set ```train: False``` in ```scripts/parametes.yaml```.
+- Testing:
+  ```bash
+  python scripts/run_agent.py
+  ```
+
+### Baseline
+- To run the Baseline by Krivic and Piater, set ```train: False``` and ```test_baseline: True``` in ```scripts/parametes.yaml```.
 - Testing:
   ```bash
   python scripts/run_agent.py
