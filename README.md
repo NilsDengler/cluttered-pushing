@@ -63,6 +63,7 @@ hyperparameter in ```scripts/train_agent_script```.
 
 ### Testing
 - To evaluate a trained agent, set ```train: False``` in ```scripts/parametes.yaml```.
+- per default the testing uses ```log_dir_name: "../Logs/example_agent/model_test/"``` as specified in ```scripts/parametes.yaml```. Please note, that this is an example agent and not the agent used to reproduce the results  of the paper.
 - Testing:
   ```bash
   python scripts/run_agent.py
